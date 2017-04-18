@@ -40,9 +40,8 @@ Generating phylogenic trees: 2016/otus and 2017/otus
 
 
 Further analysis ran using QIIME 1.9.1 on Macboook Terminal:
-source activate qiime1
 
-#  Core diversity analyses command(Generates alpha- and beta-diversity and taxonomic bar plots)
+#  Core diversity analyses command (Generates alpha- and beta-diversity and taxonomic bar plots)
 core_diversity_analyses.py 
 -i /merged_otu_table.biom 
 -m /map/map.tsv_corrected.txt 
@@ -50,17 +49,40 @@ core_diversity_analyses.py
 -e 371590 
 -o matrix.html
 
-# Statistically compare taxa level 2 (L2) Phyla abundance between 2016 and 2017 with ANOVA commands
+# Statistical comparison of alpha-diversity between 2016 and 2017
+compare_alpha_diversity.py
+-i /alpha_div_collated/observed_otus.txt
+-c Year
+-m /map/map.tsv_corrected.txt
+-o significance_alpha_diversity.txt
+
+# Make 2D beta-diversity unweighted unifrac plots
+make_2d_plots.py
+-i /bdiv_even371590/unweighted_unifrac_pc.txt 
+-m /map/map.tsv_corrected.txt
+-o 2d_plots
+
+# Statistical comparison of beta-diversity between 2016 and 2017 using ANOSIM
+compare_categories.py
+--method anosim 
+-i /bdiv_even371590/unweighted_unifrac_emperor_pcoa_plot/unweighted_unifrac_dm.txt
+-m /map/map.tsv_corrected.txt
+-c Year
+-o significance_beta_diversity_anosim
+
+# Summarize taxa level 2 (L2) Phyla abundance command
 summarize_taxa.py 
 -i /merged_otu_table.biom 
 -L 2 
 -o taxa_summaries
 
+# Statistical analysis of Phyla abundance between 2016 and 2017 using non-parametric T-test
 group_significance.py 
 -i /merge_otu_table_L2.biom 
 -m /map.tsv_corrected.txt 
 -c Year 
--o anova_tests_L2.txt
+-s nonparametric_t_test
+-o nonparametric_t_test.txt
 
 # Visually compare Phyla abundance between 2016 and 2017 by bar plots:
 summarize_taxa_through_plots.py 
